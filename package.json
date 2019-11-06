@@ -1,0 +1,16 @@
+{
+  "name": "music-app",
+  "version": "1.0.0",
+  "description": "An app to stream music",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Uchenna Ofodile",
+  "license": "MIT",
+  "dependencies": {
+    "ejs": "^2.7.1",
+    "express": "^4.17.1"
+  }
+}
