@@ -2,22 +2,28 @@
 For every other path, it will respond with a 404 Not Found.*/
 
 const express = require('express') //allows us to use express
-const app = express() /*starts express and stores it 
+const app = express()  /*starts express and stores it 
                         in a varible called app for later use*/
- 
-app.listen(3000, () => {
-    console.log("API up and running!") /*This app listens on port 3000 for connections. 
-    The app responds in the console */
-});
 
-app.get('/', function (request, response) { 
-  response.send('Hey')
-}); /*The app responds with “Hello World!” 
-for requests to the root URL (/) or route. */
+const apiKey = process.env.APIKEY /*use to check where binaries are located and 
+                                  make external calls to them if required.*/
+
+const request = require('request');
+
+const bodyParser = require('body-parser');
+ 
 
 /* setting view engine, allows you
 use ejs to view your content*/
 app.set('view engine', 'ejs');
+
+
+/*app.get('/', function (request, response) { 
+  response.send('Hey')
+}); The app responds with “Hello World!” 
+for requests to the root URL (/) or route. */
+
+
 
 
 /*app middleware */
@@ -29,6 +35,8 @@ express.static(root, [options])*/
 
 
 app.use(express.static('./public'));
+app.use(bodyParser.urlencoded({extended: false}));
+
 
 
 //ROUTES
@@ -44,7 +52,38 @@ callback, a callback function.
 If provided, the method returns both the possible error 
 and rendered string, but does not perform an automated response. 
 When an error occurs, the method invokes next(err) internally. */
-app.get('/', function (request, response) {
-  response.render('home.ejs')
-}
-);
+app.get('/', function (req, res) {
+  res.render('home.ejs')
+});
+
+//handling post request for forward slash
+//when the user sends data to the server to the we will use the api to communicate with deezer
+
+//user sends data to server
+app.get('/', function (req, res) {
+
+var options = {
+  method: 'GET',
+  url: 'https://deezerdevs-deezer.p.rapidapi.com/search',
+  qs: {q: 'eminem'},
+  headers: {
+    'x-rapidapi-host': 'deezerdevs-deezer.p.rapidapi.com',
+    'x-rapidapi-key': 'apiKey'
+  }
+};
+
+request(options, function (error, response, body) {
+	if (error) throw new Error(error);
+
+	console.log(body);
+});
+
+});
+
+
+
+
+app.listen(3000, () => {
+  console.log("API up and running!") /*This app listens on port 3000 for connections. 
+  The app responds in the console */
+});
