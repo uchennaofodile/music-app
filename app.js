@@ -8,10 +8,9 @@ const app = express()  /*starts express and stores it
 const apiKey = process.env.APIKEY /*use to check where binaries are located and 
                                   make external calls to them if required.*/
 
-const request = require('request');
 
 const bodyParser = require('body-parser');
- 
+const request = require('request'); 
 
 /* setting view engine, allows you
 use ejs to view your content*/
@@ -35,7 +34,7 @@ express.static(root, [options])*/
 
 
 app.use(express.static('./public'));
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({extended: true}));
 
 
 
@@ -53,14 +52,16 @@ If provided, the method returns both the possible error
 and rendered string, but does not perform an automated response. 
 When an error occurs, the method invokes next(err) internally. */
 app.get('/', function (req, res) {
-  res.render('home.ejs')
+  res.render ('home.ejs')
 });
 
 //handling post request for forward slash
 //when the user sends data to the server to the we will use the api to communicate with deezer
 
 //user sends data to server
-app.get('/', function (req, res) {
+/*app.get('/', function (req, res) {
+
+});*/
 
 var options = {
   method: 'GET',
@@ -68,22 +69,32 @@ var options = {
   qs: {q: 'eminem'},
   headers: {
     'x-rapidapi-host': 'deezerdevs-deezer.p.rapidapi.com',
-    'x-rapidapi-key': 'apiKey'
+    'x-rapidapi-key': 'ea7ac57855msh6bb435a851550d4p1340eejsn4552ae9a69ec'
   }
 };
 
 request(options, function (error, response, body) {
 	if (error) throw new Error(error);
-
-	console.log(body);
+  let tracks = JSON.parse(body);
+	console.log(tracks);
 });
 
-});
+app.post('/', function (req, res){
+
+  let url = https://deezerdevs-deezer.p.rapidapi.com/search
+
+}
+)
+
+/*app.post('/', function (req, res) {
+  var url = 'https://deezerdevs-deezer.p.rapidapi.com/search'
+request(url, function(response, body){
+  //let tracks = JSON.parse(body);
+  res.render('home.ejs', {body})
+})
+
+})*/
 
 
-
-
-app.listen(3000, () => {
-  console.log("API up and running!") /*This app listens on port 3000 for connections. 
-  The app responds in the console */
-});
+app.listen(3000, function(){
+  console.log('server is live on port: 3000');});
