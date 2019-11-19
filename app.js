@@ -5,8 +5,20 @@ const express = require('express') //allows us to use express
 const app = express()  /*starts express and stores it 
                         in a varible called app for later use*/
 
-const apiKey = process.env.APIKEY /*use to check where binaries are located and 
+const API_KEY = 'ea7ac57855msh6bb435a851550d4p1340eejsn4552ae9a69ec' /*use to check where binaries are located and 
                                   make external calls to them if required.*/
+
+const request = axios.create({
+  baseURL  : "https://deezerdevs-deezer.p.rapidapi.com/search",
+  timeout  : 300000,
+  headers  : {"x-rapidapi-key" : API_KEY} 
+})
+
+export function getAlbums (search = 'eminem'){
+    const albums = request.get(`search?q=${search}`)
+    .then(response => response.data.data)
+    .catch(error => console.log(error));
+}
 
 
 const bodyParser = require('body-parser');
@@ -55,6 +67,26 @@ app.get('/', function (req, res) {
   res.render ('home.ejs')
 });
 
+
+app.get('/music', function (req, res) {
+
+
+  let url = 'https://deezerdevs-deezer.p.rapidapi.com/search?q=' + req.body. + '&units=imperial&APPID='+apiKey;
+  
+  request(url, function (error, response, body) {
+    if(error){
+      res.render('home.ejs',{ data: null, error: "Error, please try again" });
+    } else {
+      let data = JSON.parse(body);
+      if (data.main == undefined){
+        res.render('home.ejs',{ data: null, error: "Error, please try again" });
+      } else {
+        res.render('home.ejs',{ data, error: null });
+      }
+    }
+  });
+ });
+
 //handling post request for forward slash
 //when the user sends data to the server to the we will use the api to communicate with deezer
 
@@ -63,37 +95,7 @@ app.get('/', function (req, res) {
 
 });*/
 
-var options = {
-  method: 'GET',
-  url: 'https://deezerdevs-deezer.p.rapidapi.com/search',
-  qs: {q: 'eminem'},
-  headers: {
-    'x-rapidapi-host': 'deezerdevs-deezer.p.rapidapi.com',
-    'x-rapidapi-key': 'ea7ac57855msh6bb435a851550d4p1340eejsn4552ae9a69ec'
-  }
-};
 
-request(options, function (error, response, body) {
-	if (error) throw new Error(error);
-  let tracks = JSON.parse(body);
-	console.log(tracks);
-});
-
-app.post('/', function (req, res){
-
-  let url = https://deezerdevs-deezer.p.rapidapi.com/search
-
-}
-)
-
-/*app.post('/', function (req, res) {
-  var url = 'https://deezerdevs-deezer.p.rapidapi.com/search'
-request(url, function(response, body){
-  //let tracks = JSON.parse(body);
-  res.render('home.ejs', {body})
-})
-
-})*/
 
 
 app.listen(3000, function(){
